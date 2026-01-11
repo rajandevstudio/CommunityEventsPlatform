@@ -57,15 +57,27 @@ ALLOWED_HOSTS = ["*"]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.BasicAuthentication', # for Dev purpose only (api/docs)
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+    ],
+    "EXCEPTION_HANDLER": "commons.expection_handling.custom_exception_handler",
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=10),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Community Events API',
+    'DESCRIPTION': 'API documentation and testing',
+    'VERSION': '1.0.0',
 }
 
 
@@ -81,7 +93,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'events'
+    'events',
+    'users',
+    'django_filters',
+    'drf_spectacular',
+    'commons'
 ]
 
 MIDDLEWARE = [
@@ -139,6 +155,8 @@ DATABASES = {
 }
 
 
+
+AUTH_USER_MODEL = "users.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
