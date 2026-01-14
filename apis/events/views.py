@@ -1,5 +1,7 @@
 from apis.events.filters import EventFilter
 from apis.events.serializers import EventSerializer
+from core.cache.cacheMixin import ListCacheMixin
+from core.cache.invalidations import EVENT_CACHE
 from events.models import Event
 from rest_framework.permissions import IsAuthenticated
 from apis.events.permissions import IsOrganizer, IsEventOwner
@@ -60,13 +62,14 @@ from drf_spectacular.utils import (
     ),
 
 )
-class EventViewSet(ModelViewSet):
+class EventViewSet(ListCacheMixin, ModelViewSet):
+    cache_namespace = EVENT_CACHE
     serializer_class = EventSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_class = EventFilter
-    ordering_fields = ["start_time", "created_at"]
-    ordering = ["start_time"]
+    ordering_fields = ["start_time", "created_at", "updated_at"]
+    ordering = ["-updated_at"]
 
     def get_queryset(self):
         return Event.objects.all()
@@ -138,5 +141,33 @@ class EventViewSet(ModelViewSet):
 
         return Response(
             {"message": "Joined successfully"},
+            status=status.HTTP_200_OK,
+        )
+
+    @extend_schema(
+        summary="Leave an event",
+        description="Allows an authenticated user to leave an event.",
+        responses={
+            200: OpenApiResponse(description="Left successfully"),
+            400: OpenApiResponse(description="User not joined"),
+        },
+        tags=['Events']
+    )
+    @action(detail=True, methods=["post"], url_path="leave")
+    def leave_event(self, request, pk=None):
+        event = self.get_object()
+        user = request.user
+
+        if not event.participants.filter(id=user.id).exists():
+            return Response(
+                {"message": "User not joined"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        with transaction.atomic():
+            event.participants.remove(user)
+
+        return Response(
+            {"message": "Left successfully"},
             status=status.HTTP_200_OK,
         )

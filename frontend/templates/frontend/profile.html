@@ -1,0 +1,55 @@
+{% extends "frontend/base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-4">User Profile</h1>
+    <div id="profile-container" class="bg-white shadow-md rounded-lg p-6">
+        <!-- Profile data will be loaded here -->
+        <p>Loading profile...</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const profileContainer = document.getElementById('profile-container');
+
+    // Function to fetch and display user profile
+    async function loadProfile() {
+        try {
+            const user = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')) : null;
+            if (user) {
+                profileContainer.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-gray-600">Username:</p>
+                            <p class="text-lg font-semibold">${user.username}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Email:</p>
+                            <p class="text-lg font-semibold">${user.email || 'Not provided'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Role:</p>
+                            <p class="text-lg font-semibold">${user.role}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Date Joined:</p>
+                            <p class="text-lg font-semibold">${new Date(user.date_joined).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                profileContainer.innerHTML = '<p>Could not load profile.</p>';
+            }
+        } catch (error) {
+            console.error('Error loading profile:', error);
+            profileContainer.innerHTML = '<p>Error loading profile. Please try again later.</p>';
+        }
+    }
+
+    loadProfile();
+});
+</script>
+{% endblock %}

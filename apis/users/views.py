@@ -1,3 +1,5 @@
+from core.cache.cacheMixin import ListCacheMixin
+from core.cache.invalidations import USER_CACHE
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import ReadOnlyModelViewSet
@@ -45,6 +47,7 @@ class RegisterUserView(generics.CreateAPIView):
     ),
 )
 class UserViewSet(ReadOnlyModelViewSet):
+    cache_namespace = USER_CACHE
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 

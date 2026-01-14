@@ -5,41 +5,52 @@ import os
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
+BASE_DIR = Path(__file__).resolve().parent
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
+        "version": 1,
+        "disable_existing_loggers": False,
+
+        "formatters": {
+            "json": {
+                "format": (
+                    '{'
+                    '"time": "%(asctime)s", '
+                    '"level": "%(levelname)s", '
+                    '"logger": "%(name)s", '
+                    '"line": %(lineno)d, '
+                    '"message": "%(message)s"'
+                    '}'
+                )
+            }
         },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
+
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+                "level": "INFO",
+                "formatter": "json",
+            }
         },
-    },
-    'handlers': {
-        'console': {
-            'level': 'INFO',
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple',
+
+        "root": {
+            "handlers": ["console"],
+            "level": "INFO",
         },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'propagate': False,
-            'level': 'INFO',
+
+        "loggers": {
+            "django": {
+                "handlers": ["console"],
+                "level": "INFO",
+                "propagate": False,
+            },
+            "django.request": {
+                "handlers": ["console"],
+                "level": "ERROR",
+                "propagate": False,
+            },
         },
-    },
-}
+    }
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -65,8 +76,9 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
     ],
-    "EXCEPTION_HANDLER": "commons.expection_handling.custom_exception_handler",
+    "EXCEPTION_HANDLER": "core.expection_handling.custom_exception_handler",
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_PAGINATION_CLASS': 'core.pagination.Pagination',
 }
 
 SIMPLE_JWT = {
@@ -81,6 +93,19 @@ SPECTACULAR_SETTINGS = {
 }
 
 
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+CACHE_TTL = os.getenv("CACHE_TTL", default=60 * 60 * 24)  # 1 day
+
+
 
 # Application definition
 
@@ -93,11 +118,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'events',
-    'users',
+    'events.apps.EventsConfig',
+    'users.apps.UsersConfig',
+    'core.apps.CoreConfig',
+    "frontend.apps.FrontendConfig",
     'django_filters',
     'drf_spectacular',
-    'commons'
 ]
 
 MIDDLEWARE = [
@@ -124,7 +150,7 @@ ROOT_URLCONF = 'urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ["templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -193,6 +219,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
