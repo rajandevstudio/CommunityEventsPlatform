@@ -9,4 +9,4 @@ class IsOrganizer(BasePermission):
 
 class IsEventOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
-        return obj.created_by == request.user
+        return obj.organizer == request.user

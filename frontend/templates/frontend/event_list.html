@@ -1,0 +1,33 @@
+{% extends "frontend/base.html" %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+  <h2 class="text-2xl font-bold">Events</h2>
+  <a
+    id="create-event-btn"
+    href="/playground/events/create/"
+    class="bg-primary text-white px-4 py-2 rounded hover:bg-blue-700 hidden"
+  >
+    Create Event
+  </a>
+</div>
+
+<div id="events" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <!-- Event cards injected here -->
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  requireAuth();
+  loadEvents();
+  document.addEventListener("DOMContentLoaded", () => {
+    console.log('isOrganizer()', isOrganizer())
+  if (isOrganizer()) {
+    document
+      .getElementById("create-event-btn")
+      .classList.remove("hidden");
+  }
+});
+</script>
+{% endblock %}

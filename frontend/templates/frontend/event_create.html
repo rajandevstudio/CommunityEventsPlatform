@@ -1,0 +1,209 @@
+{% extends "frontend/base.html" %} {% block content %}
+<div class="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
+  <h2 id="form-title" class="text-3xl font-bold mb-6 text-gray-800">
+    Create Event
+  </h2>
+
+  <form id="event-form" class="space-y-6">
+    <div>
+      <label for="title" class="block text-sm font-medium text-gray-700"
+        >Title</label
+      >
+      <input
+        id="title"
+        type="text"
+        required
+        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        placeholder="e.g., Summer Tech Conference"
+      />
+    </div>
+
+    <div>
+      <label for="description" class="block text-sm font-medium text-gray-700"
+        >Description</label
+      >
+      <textarea
+        id="description"
+        rows="4"
+        required
+        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        placeholder="A brief summary of the event"
+      ></textarea>
+    </div>
+
+    <div>
+      <label for="location" class="block text-sm font-medium text-gray-700"
+        >Location</label
+      >
+      <input
+        id="location"
+        type="text"
+        required
+        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        placeholder="e.g., Grand Exhibition Hall"
+      />
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label for="start_time" class="block text-sm font-medium text-gray-700"
+          >Start Time</label
+        >
+        <input
+          id="start_time"
+          type="datetime-local"
+          required
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+      <div>
+        <label for="end_time" class="block text-sm font-medium text-gray-700"
+          >End Time</label
+        >
+        <input
+          id="end_time"
+          type="datetime-local"
+          required
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+    </div>
+
+    <div>
+      <label for="capacity" class="block text-sm font-medium text-gray-700"
+        >Capacity</label
+      >
+      <input
+        id="capacity"
+        type="number"
+        min="1"
+        required
+        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        placeholder="e.g., 150"
+      />
+    </div>
+
+    <div class="flex items-center justify-end space-x-4">
+      <a
+        href="/playground/events/"
+        class="text-gray-600 hover:text-gray-800 font-medium"
+        >Cancel</a
+      >
+      <button
+        id="save-btn"
+        type="submit"
+        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300"
+      >
+        Create
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %} {% block scripts %}
+<script>
+  function toDatetimeLocal(date) {
+    const pad = (n) => String(n).padStart(2, "0");
+    return (
+      date.getFullYear() +
+      "-" +
+      pad(date.getMonth() + 1) +
+      "-" +
+      pad(date.getDate()) +
+      "T" +
+      pad(date.getHours()) +
+      ":" +
+      pad(date.getMinutes())
+    );
+  }
+
+  document.getElementById("start_time").value =
+    toDatetimeLocal(new Date());
+    document.getElementById("end_time").value =
+    toDatetimeLocal(new Date());
+</script>
+
+<script>
+  const form = document.getElementById("event-form");
+  const formTitle = document.getElementById("form-title");
+  const saveBtn = document.getElementById("save-btn");
+
+  const title = document.getElementById("title");
+  const description = document.getElementById("description");
+  const locationEl = document.getElementById("location");
+  const startTime = document.getElementById("start_time");
+  const endTime = document.getElementById("end_time");
+  const capacity = document.getElementById("capacity");
+
+  let eventId = null;
+
+  document.addEventListener("DOMContentLoaded", () => {
+    requireAuth();
+
+    const params = new URLSearchParams(window.location.search);
+    eventId = params.get("id");
+
+    if (eventId) {
+      formTitle.innerText = "Edit Event";
+      saveBtn.innerText = "Save Changes";
+      loadEventData();
+    }
+  });
+
+  async function loadEventData() {
+    try {
+      const event = await apiFetch(`/api/v1/events/${eventId}/`);
+      title.value = event.title;
+      description.value = event.description;
+      locationEl.value = event.location;
+      capacity.value = event.capacity;
+
+      // Format dates for datetime-local input
+      startTime.value = event.start_time.slice(0, 16);
+      endTime.value = event.end_time.slice(0, 16);
+    } catch (error) {
+      showToast("Failed to load event data.", "error");
+    }
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    handleSave();
+  });
+
+  async function handleSave() {
+    saveBtn.disabled = true;
+    saveBtn.innerText = eventId ? "Saving..." : "Creating...";
+
+    const payload = {
+      title: title.value,
+      description: description.value,
+      location: locationEl.value,
+      start_time: startTime.value,
+      end_time: endTime.value,
+      capacity: parseInt(capacity.value),
+    };
+
+    try {
+      const url = eventId
+        ? `/api/v1/events/${eventId}/`
+        : "/api/v1/events/";
+      const method = eventId ? "PATCH" : "POST";
+
+      await apiFetch(url, { method, body: JSON.stringify(payload) });
+
+      showToast(
+        `Event ${eventId ? "updated" : "created"} successfully!`,
+        "success"
+      );
+
+      setTimeout(() => {
+        window.location.href = "/playground/events/";
+      }, 1000);
+    } catch (error) {
+      saveBtn.disabled = false;
+      saveBtn.innerText = eventId ? "Save Changes" : "Create";
+      showToast(error.message || "An error occurred.", "error");
+    }
+  }
+</script>
+{% endblock %}

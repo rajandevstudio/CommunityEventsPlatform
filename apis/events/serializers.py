@@ -1,9 +1,11 @@
 from django.utils import timezone
 from rest_framework import serializers
 from events.models import Event
+from apis.users.serializers import UserSerializer
+
 
 class EventSerializer(serializers.ModelSerializer):
-    organizer = serializers.ReadOnlyField(source="organizer.username")
+    organizer = UserSerializer(read_only=True)
     participants = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
@@ -19,16 +21,21 @@ class EventSerializer(serializers.ModelSerializer):
             "organizer",
             "participants",
         ]
+        read_only_fields = ["organizer", "participants"]
 
     def validate(self, data):
-        if data["start_time"] >= data["end_time"]:
+        start = data.get("start_time")
+        end = data.get("end_time")
+
+        if start and end and end <= start:
             raise serializers.ValidationError(
-                "End time must be after start time"
+                {"end_time": "End time must be after start time"}
             )
 
-        if data["start_time"] < timezone.now():
+        if start and start < timezone.now():
             raise serializers.ValidationError(
-                "Event cannot start in the past"
+                {"start_time": "Event cannot start in the past"}
             )
 
         return data
+

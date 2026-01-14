@@ -9,8 +9,9 @@ urlpatterns = [
     path('', lambda x: ok),
     path('admin/', admin.site.urls),
     path('api/', include('apis.urls')),
-
+    path("playground/", include("frontend.urls")),
 ]
+
 
 
 if settings.DEBUG:
