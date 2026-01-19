@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.http import JsonResponse
-
+from django.conf.urls.static import static
 import settings
 ok = JsonResponse({"ok": True})
 urlpatterns = [
@@ -23,3 +23,8 @@ if settings.DEBUG:
         path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
         path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema')),
     ]
+
+    urlpatterns += static(
+        settings.STATIC_URL,
+        document_root=settings.STATIC_ROOT if hasattr(settings, "STATIC_ROOT") else None
+    )
