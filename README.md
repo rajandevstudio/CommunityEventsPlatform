@@ -41,7 +41,7 @@ To set up and run this project locally, follow these steps:
 
 1.  **Clone the repository:**
     ```bash
-    git clone <your-repository-url>
+    git clone https://github.com/rajandevstudio/CommunityEventsPlatform.git
     cd CommunityEventsPlatform
     ```
 
@@ -49,11 +49,17 @@ To set up and run this project locally, follow these steps:
     ```bash
     python3 -m venv .venv
     source .venv/bin/activate
+
+    # or
+
+    uv sync
     ```
 
 3.  **Install dependencies:**
     ```bash
     pip install -r requirements.txt
+
+    # no need if .venv created by uv
     ```
 
 4.  **Apply database migrations:**

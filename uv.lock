@@ -46,7 +46,7 @@ requires-dist = [
     { name = "django", specifier = "==5.0.7" },
     { name = "django-cors-headers", specifier = "==4.4.0" },
     { name = "django-filter", specifier = "==25.1" },
-    { name = "django-redis", specifier = ">=6.0.0" },
+    { name = "django-redis", specifier = "==6.0.0" },
     { name = "djangorestframework", specifier = "==3.15.2" },
     { name = "djangorestframework-simplejwt", specifier = "==5.3.1" },
     { name = "drf-spectacular", specifier = "==0.29.0" },
