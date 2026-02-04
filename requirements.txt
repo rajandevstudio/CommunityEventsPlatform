@@ -11,3 +11,4 @@ sqlparse==0.5.1
 django-filter==25.1
 drf-spectacular==0.29.0
 django-redis==6.0.0
+gunicorn==24.1.1
