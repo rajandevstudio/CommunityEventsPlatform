@@ -38,12 +38,8 @@ RUN pip install --upgrade pip && \
 COPY . .
 
 # -----------------------------
-# Collect static files
-# (Safe even if STATIC_ROOT exists)
-# -----------------------------
-RUN python manage.py collectstatic --noinput
-
-# -----------------------------
 # Run with Gunicorn (Cloud Run compatible)
 # -----------------------------
-CMD ["gunicorn", "communityeventsplatform.wsgi:application", "--bind", "0.0.0.0:8080", "--workers", "2", "--threads", "4"]
+RUN chmod +x web_server.sh
+
+CMD ["./web_server.sh"]
