@@ -36,9 +36,19 @@ async function loadEvents() {
       const isOrganizer = e.organizer?.username === currentUser.username;
       const hasJoined = e.participants.includes(currentUser.username);
       const isFull = e.participants.length >= e.capacity;
+      const isExpired = new Date(e.start_time) < new Date();
 
       let actionButton;
-      if (isOrganizer) {
+      if (isExpired) {
+        actionButton = `
+          <button
+            class="w-full bg-gray-400 text-white font-bold py-2 px-4 rounded-lg"
+            disabled
+          >
+            Event Ended
+          </button>
+        `;
+      } else if (isOrganizer) {
         actionButton = `
           <div class="flex space-x-2">
             <button

@@ -135,6 +135,20 @@ class EventViewSet(ListCacheMixin, ModelViewSet):
                 {"message": "Event is full"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        
+        if event.end_time and event.end_time < timezone.now():
+            return Response(
+                {"message": "Event has ended"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if event.start_time < timezone.now():
+            return Response(
+                {"message": "Event has already started"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+
 
         with transaction.atomic():
             event.participants.add(user)

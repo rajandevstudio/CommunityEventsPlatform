@@ -1,0 +1,63 @@
+{% extends "frontend/base.html" %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-[calc(100vh-12rem)]">
+  <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-6 text-center">
+      Create Account
+    </h2>
+
+    <form onsubmit="handleRegister(event)">
+      <input
+        id="username"
+        placeholder="Username"
+        class="w-full mb-4 px-4 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"
+        required
+      />
+
+      <input
+        id="email"
+        type="email"
+        placeholder="Email"
+        class="w-full mb-4 px-4 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"
+        required
+      />
+
+      <input
+        id="password"
+        type="password"
+        placeholder="Password"
+        class="w-full mb-4 px-4 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"
+        required
+      />
+
+      <input
+        id="confirm-password"
+        type="password"
+        placeholder="Confirm Password"
+        class="w-full mb-6 px-4 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-300"
+        required
+      />
+      
+      <select id="role" class="w-full mb-4 px-4 py-2 border rounded focus:outline-none focus:ring focus:ring-blue-300">
+        <option value="participant">Participant</option>
+        <option value="organizer">Organizer</option>
+      </select>
+
+      <button
+        type="submit"
+        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+      >
+        Register
+      </button>
+    </form>
+     <p class="text-center mt-4">
+      Already have an account? <a href="/playground/login/" class="text-blue-600">Login</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/register.js"></script>
+{% endblock %}

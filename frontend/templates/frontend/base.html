@@ -23,8 +23,8 @@
 
 <body class="bg-gray-100 min-h-screen">
 
-  <!-- NAVBAR (hidden on login) -->
-  {% if not request.path == '/playground/login' %}
+  <!-- NAVBAR (hidden on login/register) -->
+  {% if not request.path == '/playground/login/' and not request.path == '/playground/register/' %}
   <nav class="bg-gray-900 text-white px-6 py-4 flex justify-between items-center">
     <h1 class="text-lg font-semibold">Community Events</h1>
 
