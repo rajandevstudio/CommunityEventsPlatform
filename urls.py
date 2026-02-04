@@ -2,11 +2,12 @@ from django.contrib import admin
 from django.urls import path, include
 from django.http import JsonResponse
 from django.conf.urls.static import static
+from django.views.generic import RedirectView
 import settings
 ok = JsonResponse({"ok": True})
 urlpatterns = [
+    path('', RedirectView.as_view(url='/playground/login/', permanent=False)),
     path('ht/', lambda x: ok),
-    path('', lambda x: ok),
     path('admin/', admin.site.urls),
     path('api/', include('apis.urls')),
     path("playground/", include("frontend.urls")),
