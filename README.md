@@ -1,97 +1,226 @@
 # Community Events Platform
 
-A full-stack Django application designed for communities to organize and manage events. This platform provides a centralized space for organizers to post events and for community members to discover, sign up for, and participate in them.
+A **production-ready, full-stack Django application** that enables communities to create, manage, and participate in events.
+The project is designed to demonstrate **real-world backend engineering practices** such as authentication, authorization, caching, scalable API design, and clean architecture.
 
+🌐 **Live Demo:**
+👉 [https://communityeventsplatform-qh9p.onrender.com/](https://communityeventsplatform-qh9p.onrender.com/)
 
-**Live Demo:** [Link to your live application] *(TBD)*
+---
 
-## Key Features
+## 🚀 Key Features
 
-*   **User Authentication:** Secure user registration and login.
-*   **Event Management:**
-    *   Create, update, and delete events.
-    *   Browse and filter upcoming events.
-    *   View detailed event information.
-*   **User Profiles:** View and manage user-specific information.
-*   **RESTful API:** A well-defined API for interacting with events and users, built with Django REST Framework.
-*   **Scalable Architecture:** Designed with performance and scalability in mind, featuring a custom caching layer.
+### 🔐 Authentication & Registration
 
-## Architectural Highlights
+* Secure **user registration and login**
+* JWT-based authentication for API access
+* Role-aware access control (organizers vs participants)
 
-This project emphasizes a clean and scalable architecture, drawing from best practices in Django development.
+### 📅 Event Management
 
-*   **Decoupled API:** The backend is exposed via a RESTful API built with **Django REST Framework (DRF)**, allowing for a decoupled frontend or mobile application in the future.
-*   **Custom Caching Framework:** A custom caching mixin (`core.cache.CacheMixin`) is implemented to significantly improve performance for read-heavy operations.
-*   **Signal-based Cache Invalidation:** Django signals are used (`events.signals`, `users.signals`) to automatically invalidate cached data upon database modifications (e.g., when an event is updated). This ensures data consistency while maintaining performance.
-*   **Custom Permissions & Filtering:** DRF's permission and filtering systems are extended to provide granular control over API access and querying (`apis.events.permissions`, `apis.events.filters`).
-*   **Organized Project Structure:** The project is organized into logical Django apps (`users`, `events`, `apis`, `frontend`) to promote modularity and maintainability.
+* Create, update, and delete events
+* Browse and filter upcoming events
+* View detailed event information
+* Participate in events as a registered user
 
-## Technical Stack
+### 👤 User Profiles
 
-*   **Backend:** Python, Django, Django REST Framework
-*   **Frontend:** HTML5, CSS3, JavaScript (rendered via Django Templates)
-*   **Database:** PostgreSQL (production), SQLite3 (development)
-*   **Deployment:** Configured for deployment on Render (`render.yaml`).
-*   **Testing:** Unit tests using Django's built-in test framework.
-*   **Package Management:** `uv` / `pip`
+* View and manage user-specific data
+* Ownership-based access restrictions
 
-## Getting Started
+### 🔌 RESTful API
 
-To set up and run this project locally, follow these steps:
+* Clean, well-structured REST APIs built using **Django REST Framework**
+* Browsable API interface for development and testing
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/rajandevstudio/CommunityEventsPlatform.git
-    cd CommunityEventsPlatform
-    ```
+### ⚡ Performance & Scalability
 
-2.  **Create and activate a virtual environment:**
-    ```bash
-    python3 -m venv .venv
-    source .venv/bin/activate
+* Custom caching layer for read-heavy endpoints
+* Signal-based cache invalidation to maintain data consistency
+* Pagination and filtering for large datasets
 
-    # or
+---
 
-    uv sync
-    ```
+## 🏗️ Architectural Highlights
 
-3.  **Install dependencies:**
-    ```bash
-    pip install -r requirements.txt
+This project focuses on **clean backend architecture and scalability**, following Django and REST best practices.
 
-    # no need if .venv created by uv
-    ```
+* **Decoupled API Design**
+  The backend is exposed via REST APIs using **Django REST Framework**, allowing easy integration with different frontends or mobile clients.
 
-4.  **Apply database migrations:**
-    ```bash
-    python manage.py migrate
-    ```
+* **Custom Caching Framework**
+  A reusable caching mixin (`core.cache.CacheMixin`) is implemented to improve performance for frequently accessed endpoints.
 
-5.  **Create a superuser (for admin access):**
-    ```bash
-    python manage.py createsuperuser
-    ```
+* **Signal-Based Cache Invalidation**
+  Django signals (`events.signals`, `users.signals`) automatically invalidate cached data when underlying models change, ensuring freshness without manual intervention.
 
-6.  **Run the development server:**
-    ```bash
-    python manage.py runserver
-    ```
-    The application will be available at `http://127.0.0.1:8000/`.
+* **Custom Permissions & Filtering**
+  DRF permissions and filters are extended (`apis.events.permissions`, `apis.events.filters`) to provide fine-grained access control and flexible querying.
 
-## API Endpoints
+* **Modular Project Structure**
+  The application is organized into logical Django apps:
 
-The API is browsable via DRF's interface at `/api/`. Key endpoints include:
+  * `users`
+  * `events`
+  * `apis`
+  * `frontend`
+    This promotes maintainability and long-term scalability.
 
-*   `api/auth/login/`: User login.
-*   `api/events/`: List and create events.
-*   `api/events/<id>/`: Retrieve, update, or delete a specific event.
-*   `api/users/`: List users.
-*   `api/users/<id>/`: Retrieve a specific user's details.
+---
 
-## Running Tests
+## 🧩 High-Level Architecture
 
-To run the test suite, use the following command:
+```
+Frontend (Django Templates / JS)
+        ↓
+Django REST Framework APIs
+        ↓
+Authentication & Permission Layer (JWT)
+        ↓
+PostgreSQL Database
+        ↓
+Redis Cache (read-heavy endpoints)
+```
+
+---
+
+## 🛠️ Technical Stack
+
+* **Backend:** Python 3.11, Django 5, Django REST Framework
+* **Frontend:** HTML5, CSS3, JavaScript (Django Templates)
+* **Database:** PostgreSQL (production), SQLite (development)
+* **Caching:** Redis (via django-redis)
+* **Deployment:** Dockerized and deployed on **Render**
+* **Testing:** Django built-in test framework
+* **Package Management:** `pip` / `uv`
+
+---
+
+## 📦 Deployment
+
+The application is containerized using **Docker** and deployed on **Render**.
+
+### Deployment Highlights
+
+* Dockerized Django backend with **Gunicorn**
+* Environment-based configuration (no secrets in code)
+* Managed PostgreSQL database in production
+* Static files collected at build time
+* HTTPS-enabled public deployment
+
+This setup can be easily adapted to platforms like **Google Cloud Run** or **AWS**.
+
+---
+
+## 🧑‍💻 Getting Started (Local Setup)
+
+### 1️⃣ Clone the repository
+
+```bash
+git clone https://github.com/rajandevstudio/CommunityEventsPlatform.git
+cd CommunityEventsPlatform
+```
+
+---
+
+### 2️⃣ Create and activate a virtual environment
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Or using `uv`:
+
+```bash
+uv sync
+```
+
+---
+
+### 3️⃣ Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+### 4️⃣ Apply database migrations
+
+```bash
+python manage.py migrate
+```
+
+---
+
+### 5️⃣ Create a superuser (admin access)
+
+```bash
+python manage.py createsuperuser
+```
+
+---
+
+### 6️⃣ Run the development server
+
+```bash
+python manage.py runserver
+```
+
+Access the app at:
+👉 [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+
+---
+
+## 🔗 API Endpoints
+
+The API is accessible via the DRF interface at `/api/`.
+
+### Authentication
+
+* `api/auth/register/` → User registration
+* `api/auth/login/` → User login
+
+### Events
+
+* `api/events/` → List & create events
+* `api/events/<id>/` → Retrieve, update, delete event
+
+### Users
+
+* `api/users/` → List users
+* `api/users/<id>/` → Retrieve user details
+
+---
+
+## 🧪 Running Tests
+
+Run the test suite using:
 
 ```bash
 python manage.py test
 ```
+
+---
+
+## 🔮 Future Improvements
+
+* Background jobs for notifications (Celery + Redis)
+* API rate limiting for public endpoints
+* Structured logging and monitoring
+* Improved frontend UX
+
+---
+
+## 🎯 Purpose of This Project
+
+This project was built to demonstrate **practical backend engineering skills**, including:
+
+* Secure authentication & authorization
+* API design and scalability
+* Performance optimization through caching
+* Clean, maintainable Django architecture
+* Real-world deployment practices
+
+---

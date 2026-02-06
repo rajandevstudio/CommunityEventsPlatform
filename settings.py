@@ -1,5 +1,6 @@
 from pathlib import Path
 from datetime import timedelta
+import dj_database_url
 from dotenv import load_dotenv
 import os
 load_dotenv()
@@ -180,16 +181,21 @@ WSGI_APPLICATION = 'wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': f"django.db.backends.{os.getenv('DB_DATABASE')}" ,
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),       
+if os.getenv("DB_URL"):
+    DATABASES = {
+    'default': dj_database_url.config(default=os.getenv('DB_URL'))
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': f"django.db.backends.{os.getenv('DB_DATABASE')}" ,
+            'NAME': os.getenv('DB_NAME'),
+            'USER': os.getenv('DB_USER'),
+            'PASSWORD': os.getenv('DB_PASSWORD'),
+            'HOST': os.getenv('DB_HOST'),
+            'PORT': os.getenv('DB_PORT'),       
+        }
+    }
 
 
 
